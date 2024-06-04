@@ -2,7 +2,7 @@
 
 set -e
 
-apps=("Terminal" "Firefox" "DaVinci Resolve" "Photoshop")
+apps=("Firefox" "DaVinci Resolve")
 
 # Removes all pinned apps from the dock
 defaults write com.apple.dock persistent-apps -array
