@@ -10,6 +10,9 @@ defaults write com.apple.dock persistent-apps -array
 # Makes the dock automatically hide
 defaults write com.apple.dock "autohide" -bool "true"
 
+# Disables the recent apps inside the dock
+defaults write com.apple.dock show-recents -bool false
+
 # Cycles through the apps in the array
 for app in "${apps[@]}"; do
 	#Pinning apps to the dock from the previous array
