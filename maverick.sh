@@ -195,7 +195,7 @@ clone_dotfiles(){
     for dir in "${STOW_DIRS[@]}"; do
         if [ -d "$dir" ]; then
             log "Stowing $dir configuration"
-            stow -v "$dir"
+            stow -v --adopt "$dir"
         else
             warn "Dotfile directory $dir not found. Skipping."
         fi
