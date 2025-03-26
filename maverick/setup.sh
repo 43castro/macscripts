@@ -26,7 +26,7 @@ warn() {
 }
 
 # Base URL for the raw module scripts on GitHub
-BASE_URL="https://raw.githubusercontent.com/your-username/your-repo/main/modules"
+BASE_URL="https://raw.githubusercontent.com/43castro/macscripts/main/maverick/modules"
 
 # Main setup function
 main() {
