@@ -25,28 +25,25 @@ warn() {
     echo -e "${YELLOW}[!]${NC} $1"
 }
 
-# Determine script directory for GitHub raw execution
-SCRIPT_DIR="$(pwd)"
-MODULES_DIR="$SCRIPT_DIR/modules"
-
-# Fallback for local execution
-if [[ -n "${BASH_SOURCE[0]}" ]]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    MODULES_DIR="$SCRIPT_DIR/modules"
-fi
+# Base URL for the raw module scripts on GitHub
+BASE_URL="https://raw.githubusercontent.com/your-username/your-repo/main/modules"
 
 # Main setup function
 main() {
     clear
-    log "Starting MacBook Setup"
-    echo "Press ctrl+c to abort"
+    echo "Starting MacBook Setup"
+    echo "Press Ctrl+C to abort"
     sleep 3
-    source "$MODULES_DIR/core.sh"
-    source "$MODULES_DIR/essentials.sh"
-    source "$MODULES_DIR/utilities.sh"
-    source "$MODULES_DIR/creative.sh"
-    source "$MODULES_DIR/macos_config.sh"
-    log "MacBook Setup Complete! :) Have fun!"
+    # List of module scripts to source
+    modules=("core.sh" "essentials.sh" "utilities.sh" "creative.sh" "macos_config.sh")
+    # Source each module script
+    for module in "${modules[@]}"; do
+        source <(curl -fsSL "${BASE_URL}/${module}") || {
+            echo "Error: Failed to source ${module}"
+            exit 1
+        }
+    done
+    echo "MacBook Setup Complete! :) Have fun!"
     clear
 }
 
