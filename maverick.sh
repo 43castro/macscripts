@@ -130,6 +130,53 @@ install_creative() {
     log "Creative tools installed"
 }
 
+
+# Clone and stow dotfiles 
+clone_dotfiles(){
+ local DOTFILES_REPO="https://github.com/43castro/.dotfiles"
+    local DOTFILES_DIR="$HOME/.dotfiles"
+
+    # Check if dotfiles directory already exists
+    if [ -d "$DOTFILES_DIR" ]; then
+        log "Dotfiles directory already exists. Pulling latest changes."
+        cd "$DOTFILES_DIR" && git pull origin main
+    else
+        log "Cloning dotfiles repository"
+        git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+    fi
+
+    # Change to dotfiles directory
+    cd "$DOTFILES_DIR"
+
+    # Check if stow is installed
+    if ! command -v stow &> /dev/null; then
+        warn "Stow is not installed. Please install stow first."
+        return 1
+    fi
+
+    # List of directories to stow (common dotfile directories)
+    local STOW_DIRS=(
+        "zsh"
+        "git"
+        "nvim"
+        "skhd"
+        "ghostty"
+    )
+
+    # Stow each directory
+    for dir in "${STOW_DIRS[@]}"; do
+        if [ -d "$dir" ]; then
+            log "Stowing $dir configuration"
+            stow -v "$dir"
+        else
+            warn "Dotfile directory $dir not found. Skipping."
+        fi
+    done
+
+    log "Dotfiles cloned and stowed successfully"
+
+}
+   
 # MacOS Configuration Function
 configure_macos() {
     # Array of apps to pin (full paths)
@@ -169,6 +216,27 @@ configure_macos() {
     log "macOS settings configured correctly"
 }
 
+open_urls() {
+  local urls=(
+    "https://www.torrentmac.net/?s=things+"
+    "https://www.torrentmac.net/?s=affinity"
+    "https://www.torrentmac.net/?s=davinci"
+    "https://www.torrentmac.net/?s=logic"
+    "https://www.torrentmac.net/?s=transmit"
+  )
+  
+  for url in "${urls[@]}"; do
+    if command -v xdg-open &> /dev/null; then
+      xdg-open "$url"
+    elif command -v open &> /dev/null; then
+      open "$url"
+    else
+      echo "No suitable command found to open URLs."
+      return 1
+    fi
+  done
+}
+
 # Main setup function
 main() {
     clear
@@ -184,8 +252,9 @@ main() {
     install_essentials
     install_utilities
     install_creative
+    clone_dotfiles
     configure_macos
-
+    open_urls
     log "MacBook Setup Complete! :) Have fun!"
     clear
 }
