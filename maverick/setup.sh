@@ -25,9 +25,15 @@ warn() {
     echo -e "${YELLOW}[!]${NC} $1"
 }
 
-# Get the directory of the script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Determine script directory for GitHub raw execution
+SCRIPT_DIR="$(pwd)"
 MODULES_DIR="$SCRIPT_DIR/modules"
+
+# Fallback for local execution
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    MODULES_DIR="$SCRIPT_DIR/modules"
+fi
 
 # Main setup function
 main() {
