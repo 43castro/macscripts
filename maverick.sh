@@ -75,6 +75,34 @@ install_homebrew() {
     brew update --quiet && brew upgrade --quiet
 }
 
+# Function to install Oh My Zsh and set Zsh as the default shell
+install_oh_my_zsh() {
+  # Check if Zsh is installed
+  if ! command -v zsh &> /dev/null; then
+    log "Zsh is not installed. Installing Zsh..."
+    # Install Zsh using Homebrew
+    brew install zsh
+  else
+    log "Zsh is already installed."
+  fi
+
+  # Check if Oh My Zsh is already installed
+  if [ -d "$HOME/.oh-my-zsh" ]; then
+    log "Oh My Zsh is already installed."
+  else
+    log "Installing Oh My Zsh..."
+    # Install Oh My Zsh using the official installation script
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+
+  # Change the default shell to Zsh
+  log "Changing the default shell to Zsh..."
+  chsh -s "$(command -v zsh)"
+
+  log "Oh My Zsh installation and default shell change complete."
+}
+
+
 # Install Core Essentials
 install_essentials() {
     log "Installing Essential Applications"
@@ -249,6 +277,7 @@ main() {
     check_dependencies
     check_xcode_tools
     install_homebrew
+    install_oh_my_zsh
     install_essentials
     install_utilities
     install_creative
