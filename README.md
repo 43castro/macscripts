@@ -8,7 +8,7 @@ curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/
 ```
 ## maverick 
 ```bash
-curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/maverick/setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/maverick.sh | bash
 
 ```
 
