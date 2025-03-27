@@ -138,6 +138,7 @@ install_utilities() {
         stow \
         fzf \
         zsh-autosuggestions \
+        zsh-syntax-highlighting \
         switchaudio-osx
 
     brew cleanup
@@ -190,30 +191,28 @@ clone_dotfiles(){
         "skhd"
         "ghostty"
     )
-
+    
+    rm ~/.zshrc
     # Stow each directory
     for dir in "${STOW_DIRS[@]}"; do
         if [ -d "$dir" ]; then
             log "Stowing $dir configuration"
-            stow -v --adopt "$dir"
+            stow -v "$dir"
         else
             warn "Dotfile directory $dir not found. Skipping."
         fi
     done
-
+    ln -s ~/.dotfiles/castro.zsh-theme ~/.oh-my-zsh/themes/castro.zsh-theme
     log "Dotfiles cloned and stowed successfully"
-
 }
    
 # MacOS Configuration Function
 configure_macos() {
     # Array of apps to pin (full paths)
     local DOCK_APPS=(
-        "/Applications/Things3.app"
         "/Applications/Obsidian.app"
         "/Applications/Zen.app"
         "/Applications/Ghostty.app"
-        "/Applications/Spotify.app"
     )
 
     log "Configuring macOS settings"
@@ -237,20 +236,70 @@ configure_macos() {
 
     # Hide menu bar
     defaults write NSGlobalDomain _HIHideMenuBar -bool true
+    
+    # Hide color tags in Finder
+    defaults write com.apple.finder ShowRecentTags -bool false
+
+    # Add the home folder as the default for a new window
+    defaults write com.apple.finder NewWindowTarget -string "PfHm"
+    defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}"
+
+    # Hide external drives
+    defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+
+    # Hide internal drives
+    defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+
+    # Hide mounted servers
+    defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
+
+    # Hide removable media
+    defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false# Hide external drives
+    defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+
+    # Hide internal drives
+    defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+
+    # Hide mounted servers
+    defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
+
+    # Hide removable media
+    defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
+
+    # Enable reduce motion
+    defaults write -g NSReduceMotionEnabled -bool TRUE
+
+    # Disable natural scroll
+    defaults write -g com.apple.swipescrolldirection -bool FALSE
 
     # Restart Dock and Finder
     killall Dock
     killall Finder
+
+    # Start skhd service 
+    skhd --start-service
+    # Define the target directory path
+    TARGET_DIR="$HOME/Development"
+
+    # Check if the directory exists
+    if [ ! -d "$TARGET_DIR" ]; then
+    # Directory does not exist, create it
+        mkdir -p "$TARGET_DIR"
+        log "Directory '$TARGET_DIR' has been created."
+    else
+        log "Directory '$TARGET_DIR' already exists."
+    fi
     log "macOS settings configured correctly"
 }
 
 open_urls() {
   local urls=(
-    "https://www.torrentmac.net/?s=things+"
     "https://www.torrentmac.net/?s=affinity"
     "https://www.torrentmac.net/?s=davinci"
     "https://www.torrentmac.net/?s=logic"
     "https://www.torrentmac.net/?s=transmit"
+    "https://www.torrentmac.net/?s=capture+one"
+    "https://www.torrentmac.net/?s=things+"
   )
   
   for url in "${urls[@]}"; do
