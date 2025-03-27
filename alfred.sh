@@ -81,4 +81,5 @@ EOF
   osascript -e 'tell application "Alfred 5" to activate'
 }
 
+alfred_settings
 
