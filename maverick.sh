@@ -307,6 +307,23 @@ configure_macos() {
 }
 
 alfred_settings() {
+  # Open Alfred
+  open -a "Alfred 5"
+
+  # Wait for Alfred to launch (adjust the delay if necessary)
+  sleep 2
+
+  # Use AppleScript to simulate the button click
+  osascript -e '
+  tell application "System Events"
+      tell process "Alfred"
+          -- Wait for Alfred window to appear
+          delay 1
+          -- Click the "Skip setup" button (adjust if necessary)
+          click button "Skip setup" of window 1
+      end tell
+  end tell'
+
   # Base Alfred preferences path
   ALFRED_PREFS_BASE="$HOME/Library/Application Support/Alfred/Alfred.alfredpreferences/preferences"
 
@@ -401,19 +418,19 @@ main() {
     sleep 3
 
     # Run setup steps
-    check_platform
-    check_dependencies
-    check_xcode_tools
-    install_homebrew
-    install_oh_my_zsh
-    install_essentials
-    install_utilities
-    install_creative
-    clone_dotfiles
-    create_symlink
-    configure_macos
+#   check_platform
+#   check_dependencies
+#   check_xcode_tools
+#   install_homebrew
+#   install_oh_my_zsh
+#   install_essentials
+#   install_utilities
+#   install_creative
+#   clone_dotfiles
+#   create_symlink
+#   configure_macos
     alfred_settings
-    open_urls
+#   open_urls
     log "MacBook Setup Complete! Make sure to reeboot now. :) Have fun!"
     clear
 }
