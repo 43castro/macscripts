@@ -115,6 +115,8 @@ install_essentials() {
         ghostty \
         obsidian \
         appcleaner \
+        iina \
+        syncthing \
         obs \
         qbittorrent \
         ente-auth \
