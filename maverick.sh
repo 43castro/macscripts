@@ -192,7 +192,14 @@ clone_dotfiles(){
         "ghostty"
     )
 
-    rm ~/.zshrc
+    # Remove .zshrc if it exists
+    if [ -f ~/.zshrc ]; then
+        rm ~/.zshrc
+        log ".zshrc file removed"
+    else
+        log ".zshrc file not found, stowing"
+    fi
+
     # Stow each directory
     for dir in "${STOW_DIRS[@]}"; do
         if [ -d "$dir" ]; then
@@ -202,6 +209,7 @@ clone_dotfiles(){
             warn "Dotfile directory $dir not found. Skipping."
         fi
     done
+
     log "Dotfiles cloned and stowed successfully"
 }
 
@@ -406,7 +414,7 @@ main() {
     configure_macos
     alfred_settings
     open_urls
-    log "MacBook Setup Complete! :) Have fun!"
+    log "MacBook Setup Complete! Make sure to reeboot now. :) Have fun!"
     clear
 }
 
