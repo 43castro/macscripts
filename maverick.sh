@@ -79,7 +79,7 @@ install_homebrew() {
 install_oh_my_zsh() {
   # Check if Zsh is installed
   if ! command -v zsh &> /dev/null; then
-    log "Zsh is not installed. Installing Zsh..."
+    log "Zsh is not installed. Installing Zsh"
     # Install Zsh using Homebrew
     brew install zsh
   else
@@ -90,13 +90,13 @@ install_oh_my_zsh() {
   if [ -d "$HOME/.oh-my-zsh" ]; then
     log "Oh My Zsh is already installed."
   else
-    log "Installing Oh My Zsh..."
+    log "Installing Oh My Zsh"
     # Install Oh My Zsh using the official installation script
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   fi
 
   # Change the default shell to Zsh
-  log "Changing the default shell to Zsh..."
+  log "Changing the default shell to Zsh"
   chsh -s "$(command -v zsh)"
 
   log "Oh My Zsh installation and default shell change complete."
