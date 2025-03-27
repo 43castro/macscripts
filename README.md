@@ -11,7 +11,9 @@ curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/
 curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/maverick.sh | bash
 
 ```
-
+```bash
+ curl -sSL https://raw.githubusercontent.com/43castro/macscripts/refs/heads/main/alfred.sh | bash
+```
 
 - Removes all default pinned apps
 - Pinnes all the apps that I want from the array 
