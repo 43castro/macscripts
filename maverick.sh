@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 log() {
     local message="$1"
     echo -n -e "${GREEN}[+]${NC} $message "
-    
+
     # Loading animation
     for _ in {1..3}; do
         echo -n "."
@@ -63,14 +63,14 @@ install_homebrew() {
     if ! command -v brew &> /dev/null; then
         log "Installing Homebrew"
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        
+
         # Add Homebrew to PATH
         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
         eval "$(/opt/homebrew/bin/brew shellenv)"
     else
         log "Homebrew already installed"
     fi
-    
+
     # Update Homebrew
     brew update --quiet && brew upgrade --quiet
 }
@@ -106,7 +106,7 @@ install_oh_my_zsh() {
 # Install Core Essentials
 install_essentials() {
     log "Installing Essential Applications"
-    
+
     # Productivity apps
     brew install --cask --quiet \
         zen-browser \
@@ -128,7 +128,7 @@ install_essentials() {
 # Install Utilities
 install_utilities() {
     log "Installing Utilities"
-    
+
     # CLI and utility tools
     brew install --quiet \
         neovim \
@@ -148,7 +148,7 @@ install_utilities() {
 # Install Creative Tools
 install_creative() {
     log "Installing creative tools"
-    
+
     # Creative applications
     brew install --cask --quiet \
         blender \
@@ -160,10 +160,10 @@ install_creative() {
 }
 
 
-# Clone and stow dotfiles 
+# Clone and stow dotfiles
 clone_dotfiles(){
- local DOTFILES_REPO="https://github.com/43castro/.dotfiles"
-    local DOTFILES_DIR="$HOME/.dotfiles"
+  local DOTFILES_REPO="https://github.com/43castro/.dotfiles"
+  local DOTFILES_DIR="$HOME/.dotfiles"
 
     # Check if dotfiles directory already exists
     if [ -d "$DOTFILES_DIR" ]; then
@@ -191,7 +191,7 @@ clone_dotfiles(){
         "skhd"
         "ghostty"
     )
-    
+
     rm ~/.zshrc
     # Stow each directory
     for dir in "${STOW_DIRS[@]}"; do
@@ -202,10 +202,30 @@ clone_dotfiles(){
             warn "Dotfile directory $dir not found. Skipping."
         fi
     done
-    ln -s ~/.dotfiles/castro.zsh-theme ~/.oh-my-zsh/themes/castro.zsh-theme
     log "Dotfiles cloned and stowed successfully"
 }
-   
+
+# Symlink creation function
+create_symlink() {
+    local DOTFILES_DIR="$HOME/.dotfiles"
+    local source_file="$DOTFILES_DIR/castro.zsh-theme"
+    local target_file="$HOME/.oh-my-zsh/themes/castro.zsh-theme"
+
+    if [ ! -f "$source_file" ]; then
+        warn "Source file $source_file does not exist. Skipping symlink creation."
+        return 1
+    fi
+
+    if [ -e "$target_file" ]; then
+        warn "Target file $target_file already exists. Skipping symlink creation."
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$target_file")"
+    ln -s "$source_file" "$target_file"
+    log "Created symlink: $source_file -> $target_file"
+}
+
 # MacOS Configuration Function
 configure_macos() {
     # Array of apps to pin (full paths)
@@ -216,11 +236,11 @@ configure_macos() {
     )
 
     log "Configuring macOS settings"
-    
+
     # Set Dark Mode
     osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to true'
     log "Dark mode configured"
-    
+
     # Pin Dock Apps
     defaults write com.apple.dock persistent-apps -array
     for app in "${DOCK_APPS[@]}"; do
@@ -236,7 +256,7 @@ configure_macos() {
 
     # Hide menu bar
     defaults write NSGlobalDomain _HIHideMenuBar -bool true
-    
+
     # Hide color tags in Finder
     defaults write com.apple.finder ShowRecentTags -bool false
 
@@ -244,39 +264,25 @@ configure_macos() {
     defaults write com.apple.finder NewWindowTarget -string "PfHm"
     defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}"
 
-    # Hide external drives
+    # Hide external drives, internal drives, mounted servers, and removable media
     defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
-
-    # Hide internal drives
     defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-
-    # Hide mounted servers
     defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
-
-    # Hide removable media
-    defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false# Hide external drives
-    defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
-
-    # Hide internal drives
-    defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-
-    # Hide mounted servers
-    defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
-
-    # Hide removable media
     defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
 
     # Enable reduce motion
     defaults write -g NSReduceMotionEnabled -bool TRUE
 
-    # Disable natural scroll
+    # Disable natural scroll
     defaults write -g com.apple.swipescrolldirection -bool FALSE
 
     # Restart Dock and Finder
     killall Dock
     killall Finder
 
-    # Start skhd service 
+    log "macOS settings configured correctly"
+
+    # Start skhd service
     skhd --start-service
     # Define the target directory path
     TARGET_DIR="$HOME/Development"
@@ -292,8 +298,7 @@ configure_macos() {
     log "macOS settings configured correctly"
 }
 
-alfred_settings () {
- 
+alfred_settings() {
   # Base Alfred preferences path
   ALFRED_PREFS_BASE="$HOME/Library/Application Support/Alfred/Alfred.alfredpreferences/preferences"
 
@@ -321,32 +326,32 @@ alfred_settings () {
   mkdir -p "$(dirname "$APPEARANCE_LOCAL_PLIST")"
 
   # Create global appearance options plist
-  cat > "$APPEARANCE_GLOBAL_PLIST" << EOF
-  <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
+  cat > "$APPEARANCE_GLOBAL_PLIST" <<- EOF
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
     <key>hidehat</key>
     <true/>
     <key>hidemenu</key>
     <true/>
     <key>hideshortcuts</key>
     <true/>
-  </dict>
-  </plist>
-  EOF
+    </dict>
+    </plist>
+EOF
 
   # Create local appearance options plist
-  cat > "$APPEARANCE_LOCAL_PLIST" << EOF
-  <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
-    <key>darkthemeuid</key>
-    <string>theme.bundled.osxdark</string>
-  </dict>
-  </plist>
-  EOF
+  cat > "$APPEARANCE_LOCAL_PLIST" <<- EOF
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>darkthemeuid</key>
+        <string>theme.bundled.osxdark</string>
+      </dict>
+      </plist>
+EOF
 
   # Ensure correct permissions
   chmod 644 "$APPEARANCE_GLOBAL_PLIST"
@@ -357,6 +362,7 @@ alfred_settings () {
   osascript -e 'tell application "Alfred 5" to activate'
 }
 
+
 open_urls() {
   local urls=(
     "https://www.torrentmac.net/?s=affinity"
@@ -366,7 +372,7 @@ open_urls() {
     "https://www.torrentmac.net/?s=capture+one"
     "https://www.torrentmac.net/?s=things+"
   )
-  
+
   for url in "${urls[@]}"; do
     if command -v xdg-open &> /dev/null; then
       xdg-open "$url"
@@ -396,6 +402,7 @@ main() {
     install_utilities
     install_creative
     clone_dotfiles
+    create_symlink
     configure_macos
     alfred_settings
     open_urls
@@ -403,5 +410,4 @@ main() {
     clear
 }
 
-# Run the main function
 main
