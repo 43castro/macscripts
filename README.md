@@ -43,4 +43,15 @@ maverick script does the following:
     - Rive
     - Image Optim
 - Clones and stows dotfiles
-- Configures macOS setting to my linking
+- Configures macOS setting to my liking
+    - Eliminates finder color tags from the sidebar
+    - Configure Dock visibility
+    - Hide menu bar
+    - Add the home folder as the default for a new window
+    - Hide external drives, internal drives, mounted servers, and removable media
+    - Enable reduce motion
+    - Disable natural scroll
+
+
+
+
